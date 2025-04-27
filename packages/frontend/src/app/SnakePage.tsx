@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useFood, useGameOver } from "../shared/services/hooks/snake.hook"
 
 const SnakePage = () => {
     const fieldSize = 10
@@ -6,15 +7,9 @@ const SnakePage = () => {
 
     const [snakePositions, setSnakePosition] = useState<number[]>([44])
     const [direction, setDirection] = useState<string>("RIGHT")
-    const [foodPosition, setFoodPosition] = useState<number>(generateFoodPosition())
-    const [gameOver, setGameOver] = useState(false)
-    function generateFoodPosition() {
-        let newFoodPosition
-        do {
-            newFoodPosition = Math.floor(Math.random() * totalCells)
-        } while (snakePositions.includes(newFoodPosition))
-        return newFoodPosition
-    }
+
+    const {foodPosition, setFoodPosition, generateFoodPosition} = useFood(totalCells, snakePositions)
+    const {gameOver, setGameOver} = useGameOver()
 
     const handleKeyPress = (e: KeyboardEvent) => {
         if (e.key === "ArrowUp" && direction !== "DOWN") setDirection("UP")
@@ -48,7 +43,7 @@ const SnakePage = () => {
             setGameOver(true)
             return
         }
-        
+
         const newSnake = [newHead, ...snakePositions]
 
         if (newHead === foodPosition) {
