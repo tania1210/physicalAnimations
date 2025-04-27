@@ -1,15 +1,14 @@
 import { useEffect } from "react";
 import { useGameStore } from "../../../store/game";
-import { FIELD_SIZE, TOTAL_CELLS } from "../../constants/snake-page.constant";
 
-export const useFood = (snakePositions: number[]) => {
+export const useFood = (totalCells: number, snakePositions: number[]) => {
   const foodPosition = useGameStore((state) => state.foodPosition);
   const setFoodPosition = useGameStore((state) => state.setFoodPosition);
 
   function generateFoodPosition() {
     let newFoodPosition: number
     do {
-      newFoodPosition = Math.floor(Math.random() * TOTAL_CELLS);
+      newFoodPosition = Math.floor(Math.random() * totalCells);
     } while (snakePositions.includes(newFoodPosition));
     setFoodPosition(newFoodPosition)
     return newFoodPosition;
@@ -38,22 +37,25 @@ export const useSnakeMovement = (
   setFoodPosition: (position: number) => void,
   generateFoodPosition: () => number
 ) => {
+  const fieldSize = 10;
+  const totalCells = fieldSize * fieldSize;
+
   const moveSnake = () => {
       const head = snakePositions[0];
       let newHead = head;
 
       switch (direction) {
           case "UP":
-              newHead = (head - FIELD_SIZE + TOTAL_CELLS) % TOTAL_CELLS;
+              newHead = (head - fieldSize + totalCells) % totalCells;
               break;
           case "DOWN":
-              newHead = (head + FIELD_SIZE) % TOTAL_CELLS;
+              newHead = (head + fieldSize) % totalCells;
               break;
           case "LEFT":
-              newHead = head % FIELD_SIZE === 0 ? head + (FIELD_SIZE - 1) : head - 1;
+              newHead = head % fieldSize === 0 ? head + (fieldSize - 1) : head - 1;
               break;
           case "RIGHT":
-              newHead = (head + 1) % FIELD_SIZE === 0 ? head - (FIELD_SIZE - 1) : head + 1;
+              newHead = (head + 1) % fieldSize === 0 ? head - (fieldSize - 1) : head + 1;
               break;
           default:
               break;
@@ -79,18 +81,4 @@ export const useSnakeMovement = (
       const interval = setInterval(moveSnake, 300);
       return () => clearInterval(interval);
   }, [direction, snakePositions]);
-};
-
-export const useKeyPress = (setDirection: React.Dispatch<React.SetStateAction<string>>) => {
-  const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === "ArrowUp") setDirection("UP");
-      if (e.key === "ArrowDown") setDirection("DOWN");
-      if (e.key === "ArrowLeft") setDirection("LEFT");
-      if (e.key === "ArrowRight") setDirection("RIGHT");
-  };
-
-  useEffect(() => {
-      window.addEventListener("keydown", handleKeyPress);
-      return () => window.removeEventListener("keydown", handleKeyPress);
-  });
 };

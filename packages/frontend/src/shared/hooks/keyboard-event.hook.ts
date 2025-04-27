@@ -11,5 +11,5 @@ export const useKeyPress = (setDirection: React.Dispatch<React.SetStateAction<st
     useEffect(() => {
         window.addEventListener("keydown", handleKeyPress);
         return () => window.removeEventListener("keydown", handleKeyPress);
-    }, []);
+    });
 };

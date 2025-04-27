@@ -1,15 +1,12 @@
 import { useState } from "react"
-import { useFood, useGameOver, useSnakeMovement } from "../shared/services/hooks/snake.hook"
-import { useKeyPress } from "../shared/services/hooks/keyboard_event.hook"
+import { useFood, useGameOver, useKeyPress, useSnakeMovement } from "../shared/services/hooks/snake.hook"
+import { FIELD_SIZE, TOTAL_CELLS } from "../shared/constants/snake-page.constant"
 
 const SnakePage = () => {
-    const fieldSize = 10
-    const totalCells = fieldSize * fieldSize
-
     const [snakePositions, setSnakePosition] = useState<number[]>([44])
     const [direction, setDirection] = useState<string>("RIGHT")
 
-    const {foodPosition, setFoodPosition, generateFoodPosition} = useFood(totalCells, snakePositions)
+    const {foodPosition, setFoodPosition, generateFoodPosition} = useFood(snakePositions)
     const {gameOver, setGameOver} = useGameOver()
 
     useKeyPress(setDirection);
@@ -21,7 +18,7 @@ const SnakePage = () => {
         setGameOver, 
         foodPosition, 
         setFoodPosition, 
-        generateFoodPosition
+        generateFoodPosition,
     );
 
     return (
@@ -36,12 +33,12 @@ const SnakePage = () => {
             {!gameOver && (
                 <div style={{
                     display: "grid",
-                    gridTemplateColumns: `repeat(${fieldSize}, 30px)`,
-                    gridTemplateRows: `repeat(${fieldSize}, 30px)`,
+                    gridTemplateColumns: `repeat(${FIELD_SIZE}, 30px)`,
+                    gridTemplateRows: `repeat(${FIELD_SIZE}, 30px)`,
                     gap: "2px",
                     marginTop: "20px"
                 }}>
-                    {Array.from({ length: totalCells }).map((_, index) => (
+                    {Array.from({ length: TOTAL_CELLS }).map((_, index) => (
                         <div
                             key={index}
                             style={{
